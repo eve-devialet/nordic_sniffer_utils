@@ -71,8 +71,10 @@ def select_dev():
     address = d.asList()[choice].address
     return(address)
 
-def loop():
+def loop(duration = None):
     # Enter main loop
+    if duration != None:
+        start = time.time()
     nLoops = 0
     while True:
         time.sleep(0.1)
@@ -90,6 +92,9 @@ def loop():
             print "currentConnectRequest", mySniffer.currentConnectRequest
             print "packetsInLastConnection", mySniffer.packetsInLastConnection
             print "nPackets", nPackets
+        if time != None:
+            if time.time() - start >= duration:
+                break
         
 # Takes list of packets
 def processPackets(packets):

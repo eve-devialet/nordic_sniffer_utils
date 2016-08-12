@@ -14,11 +14,12 @@ OPTIONS
  -h / --help
     Print this help
  -t / --time=TIME
-    Select a duration
+    Select a duration in seconds for the scan
 '''
 
 import ble_sniffer_core as sniff
 import sys
+import os
 import getopt
 
 try:
@@ -28,14 +29,15 @@ except getopt.GetoptError:
 
 device_sel = None
 device_addr = None
+time = None
 
 for opt, arg in opts:
     if opt in ["-h", "--help"]:
         print(__doc__)
         sys.exit()
     elif opt in ["-t", "--time="]:
-        print("Time selected %d seconds"%arg)
-        time = arg
+        print("Time selected %s seconds"%arg)
+        time = int(arg)
     elif opt in ["-s", "--selection="]:
         print("Selected device %s"%arg)
         device_sel = arg
@@ -51,8 +53,12 @@ else:
 
 if device_addr != None:
     sniff.setup(device_addr)
-    sniff.loop()
+    sniff.loop(time)
 else:
     device_addr = sniff.select_dev()
     sniff.setup(device_addr)
-    sniff.loop()
+    sniff.loop(time)
+
+if time != None:
+    os.system("su - eve /opt/wireshark-1.12.0/wireshark-nordic " +
+              "/opt/SnifferAPIBuild/logs/capture.pcap")
